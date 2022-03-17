@@ -1,0 +1,23 @@
+<app-header></app-header>
+<div id="main_container" key="assessor-main-dash">
+  <app-navbar></app-navbar>
+  <div class="grid justify-content-center">
+    <div class="col-12">
+      <p-card>
+        <h1>Assessment for Caretaker {{ currentCaretakerName }}</h1>
+        <br />
+        <div
+          *ngIf="
+            createCaretakerAssessmentService.questionDomainMenu$
+              | async as items
+          "
+        >
+          <p-steps [model]="items" [readonly]="false"></p-steps>
+        </div>
+        <br />
+        <router-outlet name="caretakerAssessmentForm"></router-outlet>
+      </p-card>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

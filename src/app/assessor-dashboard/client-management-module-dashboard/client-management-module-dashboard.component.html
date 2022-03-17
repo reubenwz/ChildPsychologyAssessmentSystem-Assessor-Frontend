@@ -1,0 +1,131 @@
+<app-header></app-header>
+<app-navbar></app-navbar>
+<span class="page-header grid justify-content-center">
+  <h1>Client Management</h1>
+</span>
+<div class="grid justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <p-toolbar styleClass="p-mb-4">
+        <ng-template pTemplate="left">
+          <button
+            pButton
+            pRipple
+            label="Create"
+            icon="pi pi-plus"
+            class="orange-button"
+            (click)="openCreateClientDialog()"
+          ></button>
+        </ng-template>
+      </p-toolbar>
+
+      <div *ngIf="clientService.existingClients$ | async as existingClients">
+        <p-table
+          #dt
+          [value]="existingClients"
+          [rows]="30"
+          [paginator]="true"
+          [globalFilterFields]="['name']"
+          responsiveLayout="scroll"
+          [rowHover]="true"
+          dataKey="clientId"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+          [showCurrentPageReport]="true"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="clientUniqueId">
+                Client Unique ID
+                <p-sortIcon field="clientUniqueId"></p-sortIcon>
+              </th>
+              <th pSortableColumn="idNumber">
+                NRIC
+                <p-sortIcon field="idNumber"></p-sortIcon>
+              </th>
+              <th pSortableColumn="name">
+                Name
+                <p-sortIcon field="name"></p-sortIcon>
+              </th>
+              <th pSortableColumn="gender">
+                Gender
+                <p-sortIcon field="gender"></p-sortIcon>
+              </th>
+              <th pSortableColumn="dob">
+                Date of Birth
+                <p-sortIcon field="dob"></p-sortIcon>
+              </th>
+              <th pSortableColumn="ethnicity">
+                Ethnicity
+                <p-sortIcon field="ethnicity"></p-sortIcon>
+              </th>
+              <th>Assessor</th>
+              <th>Action</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>
+                <p-columnFilter type="text" field="idNumber"></p-columnFilter>
+              </th>
+              <th>
+                <p-columnFilter type="text" field="name"></p-columnFilter>
+              </th>
+              <th>
+                <p-columnFilter type="text" field="gender"></p-columnFilter>
+              </th>
+              <th></th>
+              <th>
+                <p-columnFilter type="text" field="ethnicity"></p-columnFilter>
+              </th>
+              <th></th>
+              <th></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-client>
+            <tr>
+              <td>{{ client.clientUniqueId }}</td>
+              <td>{{ client.idNumber }}</td>
+              <td>{{ client.name }}</td>
+              <td>{{ client.gender }}</td>
+              <td>{{ client.dob | date }}</td>
+              <td>{{ client.ethnicity }}</td>
+              <td>
+                <a
+                  routerLink="/dashboard/assessors/{{
+                    client.assessor.assessorId
+                  }}"
+                  *ngIf="client.assessor"
+                  >{{ client.assessor.email }}</a
+                ><span *ngIf="!client.assessor">Not assigned</span>
+              </td>
+              <td>
+                <button
+                  pButton
+                  pRipple
+                  label="View Details"
+                  icon="pi pi-user-edit"
+                  class="p-button-help p-button-rounded"
+                  (click)="viewClientDetails(client)"
+                ></button>
+                <button
+                  pButton
+                  pRipple
+                  label="Delete"
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-warning"
+                  (click)="deleteClient(client)"
+                ></button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+              In total there are {{ existingClients.length }}
+              clients.
+            </div>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

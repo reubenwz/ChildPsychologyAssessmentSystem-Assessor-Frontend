@@ -1,0 +1,373 @@
+<app-header></app-header>
+<div id="main_container" key="assessor-main-dash">
+  <span class="page-header grid justify-content-center">
+    <h1>Assessment Validation</h1>
+  </span>
+  <app-navbar></app-navbar>
+  <div *ngIf="!noSupervisee">
+    <p-overlayPanel #op [showCloseIcon]="true" [style]="{ width: '550px' }">
+      <br />
+      <br />
+      Select a row to view full assessment details.
+      <br />
+      <br />
+      <ng-template pTemplate>
+        <p-table
+          [rowHover]="true"
+          [value]="selectedSuperviseeAssessments$.value"
+          selectionMode="single"
+          [(selection)]="selectedAssessment$"
+          (onRowSelect)="selectAssessmentRow()"
+          [paginator]="true"
+          [rows]="5"
+          responsiveLayout="scroll"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="name">
+                Assessment Date<p-sortIcon field="name"></p-sortIcon>
+              </th>
+              <th pSortableColumn="reason">
+                Reason<p-sortIcon field="reason"></p-sortIcon>
+              </th>
+              <th pSortableColumn="status">
+                Status<p-sortIcon field="status"></p-sortIcon>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-assessment>
+            <tr
+              [pSelectableRow]="rowData"
+              pTooltip="View assessment"
+              style="
+                background-image: linear-gradient(
+                  to bottom,
+                  white,
+                  rgba(76, 242, 101, 0.3)
+                );
+              "
+              *ngIf="assessment.status == 'SUBMITTED'"
+            >
+              <td>{{ assessment.assessmentDateDisplay }}</td>
+              <td>{{ assessment.reason }}</td>
+              <td>{{ assessment.status }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ng-template>
+    </p-overlayPanel>
+    <p-tabView>
+      <p-tabPanel header="Submissions">
+        <div class="grid justify-content-center">
+          <div class="col-12">
+            <p-card>
+              <p-table
+                #dt
+                id="kidsTable"
+                [value]="
+                  currAssessorSuperviseesSubmittedStrippedAssessments$.value
+                "
+                styleClass="p-datatable-gridlines"
+                [scrollable]="true"
+                scrollHeight="200px"
+              >
+                <ng-template pTemplate="caption">
+                  <div class="p-d-flex">
+                    <h3>Submitted Assessments To Be Approved/Rejected</h3>
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Supervisee Id</th>
+                    <th>Supervisee Name</th>
+                    <th>Assessment Id</th>
+                    <th>Client Name</th>
+                    <th>Reason</th>
+                    <th>Action</th>
+                    <!-- <th style="flex: 0 0 4rem"></th> -->
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-strippedAssessment>
+                  <tr>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.assessor.assessorId }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.assessor.name }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.assessmentId }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.client.name }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.reason }}
+                    </td>
+                    <td style="width: 200px">
+                      <p-button
+                        pRipple
+                        type="button"
+                        label="Approve/Reject"
+                        class="p-button-outlined"
+                        (onClick)="
+                          op.toggle($event);
+                          getSelectRowSuperviseeAssessments(
+                            strippedAssessment.assessmentId,
+                            strippedAssessment.assessor.name,
+                            strippedAssessment.client.name,
+                            strippedAssessment.reason
+                          )
+                        "
+                      >
+                      </p-button>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-card>
+          </div>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel header="Approved">
+        <div class="grid justify-content-center">
+          <div class="col-12">
+            <p-card>
+              <p-table
+                #dt
+                id="kidsTable"
+                [value]="currAssessorSuperviseesApprovedStrippedAssessments"
+                styleClass="p-datatable-gridlines"
+                [scrollable]="true"
+                scrollHeight="200px"
+              >
+                <ng-template pTemplate="caption">
+                  <div class="p-d-flex">
+                    <h3>Approved Assessments</h3>
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Supervisee Id</th>
+                    <th>Supervisee Name</th>
+                    <th>Assessment Id</th>
+                    <th>Client Name</th>
+                    <th>Reason</th>
+                    <th>Action</th>
+                    <!-- <th style="flex: 0 0 4rem"></th> -->
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-strippedAssessment>
+                  <tr>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.assessor.assessorId }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.assessor.name }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.assessmentId }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.client.name }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.reason }}
+                    </td>
+                    <td style="width: 200px">
+                      <p-button
+                        pRipple
+                        type="button"
+                        label="View Assessments"
+                        class="p-button-outlined"
+                        (onClick)="
+                          op.toggle($event);
+                          getSelectRowSuperviseeAssessments(
+                            strippedAssessment.assessmentId,
+                            strippedAssessment.assessor.name,
+                            strippedAssessment.client.name,
+                            strippedAssessment.reason
+                          )
+                        "
+                      >
+                      </p-button>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-card>
+          </div></div
+      ></p-tabPanel>
+      <p-tabPanel header="Rejected">
+        <div class="grid justify-content-center">
+          <div class="col-12">
+            <p-card>
+              <p-table
+                #dt
+                id="kidsTable"
+                [value]="currAssessorSuperviseesRejectedStrippedAssessments"
+                styleClass="p-datatable-gridlines"
+                [scrollable]="true"
+                scrollHeight="200px"
+              >
+                <ng-template pTemplate="caption">
+                  <div class="p-d-flex">
+                    <h3>Rejected Assessments</h3>
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Supervisee Id</th>
+                    <th>Supervisee Name</th>
+                    <th>Assessment Id</th>
+                    <th>Client Name</th>
+                    <th>Reason</th>
+                    <th>Action</th>
+                    <!-- <th style="flex: 0 0 4rem"></th> -->
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-strippedAssessment>
+                  <tr>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.assessor.assessorId }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.assessor.name }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.assessmentId }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.client.name }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.reason }}
+                    </td>
+                    <td style="width: 200px">
+                      <p-button
+                        pRipple
+                        type="button"
+                        label="View Assessments"
+                        class="p-button-outlined"
+                        (onClick)="
+                          op.toggle($event);
+                          getSelectRowSuperviseeAssessments(
+                            strippedAssessment.assessmentId,
+                            strippedAssessment.assessor.name,
+                            strippedAssessment.client.name,
+                            strippedAssessment.reason
+                          )
+                        "
+                      >
+                      </p-button>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-card>
+          </div>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel header="Assigned">
+        <div class="grid justify-content-center">
+          <div class="col-12">
+            <p-card>
+              <p-table
+                #dt
+                id="kidsTable"
+                [value]="currAssessorSuperviseesAssignedStrippedAssessments"
+                styleClass="p-datatable-gridlines"
+                [scrollable]="true"
+                scrollHeight="200px"
+              >
+                <ng-template pTemplate="caption">
+                  <div class="p-d-flex">
+                    <h3>Assigned Assessments</h3>
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Supervisee Id</th>
+                    <th>Supervisee Name</th>
+                    <th>Assessment Id</th>
+                    <th>Client Name</th>
+                    <th>Reason</th>
+                    <!-- <th style="flex: 0 0 4rem"></th> -->
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-strippedAssessment>
+                  <tr>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.assessor.assessorId }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.assessor.name }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.assessmentId }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.client.name }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ strippedAssessment.reason }}
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-card>
+          </div>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel header="All Supervisees">
+        <div class="grid justify-content-center">
+          <div class="col-12">
+            <p-card>
+              <p-table
+                #dt
+                id="kidsTable"
+                [value]="currAssessorSupervisees$.value"
+                styleClass="p-datatable-gridlines"
+                [scrollable]="true"
+                scrollHeight="400px"
+              >
+                <ng-template pTemplate="caption">
+                  <div class="p-d-flex">
+                    <h3>All Supervisees</h3>
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Supervisee Id</th>
+                    <th>Name</th>
+                    <!-- <th style="flex: 0 0 4rem"></th> -->
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-supervisee>
+                  <tr>
+                    <td style="width: 200px">
+                      {{ supervisee.assessorId }}
+                    </td>
+                    <td style="width: 200px">
+                      {{ supervisee.name }}
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-card>
+            <div></div>
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>
+<div *ngIf="noSupervisee">
+  <div id="error-page">
+    <div class="content">
+      <h2 class="header" data-text="406">406</h2>
+      <h4 data-text="Opps! Page not found">Opps! You have no Supervisees!</h4>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

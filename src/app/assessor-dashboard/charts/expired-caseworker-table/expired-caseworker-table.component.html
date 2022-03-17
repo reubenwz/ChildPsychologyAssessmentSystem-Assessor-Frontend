@@ -1,0 +1,58 @@
+<p-table
+  #dt
+  *ngIf="expiredAssessorsName$ | async as expiredCaseworkers"
+  [value]="expiredCaseworkers"
+  [rows]="30"
+  [paginator]="true"
+  [globalFilterFields]="['name']"
+  responsiveLayout="scroll"
+  [rowHover]="true"
+  dataKey="certificationId"
+  [showCurrentPageReport]="false"
+  scrollHeight="400px"
+>
+  <ng-template pTemplate="caption">
+    <div class="p-d-flex p-ai-center p-jc-between">
+      <h2 class="p-m-0 grid justify-content-center">
+        Assessors With Expired Certificates
+      </h2>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="name">
+        Name
+        <p-sortIcon field="name"></p-sortIcon>
+      </th>
+      <th pSortableColumn="dateOfCert">
+        Date of Cert
+        <p-sortIcon field="dateOfCert"></p-sortIcon>
+      </th>
+      <th>Certificate Id</th>
+    </tr>
+    <tr>
+      <th style="background-color: antiquewhite">
+        <p-columnFilter
+          type="text"
+          field="name"
+          placeholder="Search..."
+        ></p-columnFilter>
+      </th>
+      <th></th>
+      <th></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-expiredCaseworker>
+    <tr>
+      <td>{{ expiredCaseworker.name }}</td>
+      <td>{{ expiredCaseworker.dateOfCert }}</td>
+      <td>{{ expiredCaseworker.certificateId }}</td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="summary">
+    <div class="p-d-flex p-ai-center p-jc-between">
+      In total there are
+      {{ expiredCaseworkers ? expiredCaseworkers.length : 0 }} assessors.
+    </div>
+  </ng-template>
+</p-table>

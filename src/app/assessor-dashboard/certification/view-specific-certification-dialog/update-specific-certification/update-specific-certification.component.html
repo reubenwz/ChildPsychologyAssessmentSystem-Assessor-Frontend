@@ -1,0 +1,79 @@
+<div
+  class="col-12"
+  *ngIf="certificationService.specificCertification$ | async as certification"
+>
+  <form
+    [formGroup]="certificationDetailsUpdateForm"
+    (submit)="updateCertification()"
+  >
+    <div
+      class="
+        p-datatable-gridlines
+        p-datatable
+        p-component
+        p-datatable-responsive-scroll
+      "
+    >
+      <table role="table" class="p-datatable-table ng-star-inserted">
+        <tbody class="p-element p-datatable-tbody">
+        <tr class="ng-star-inserted">
+          <td>Date of Cert</td>
+          <td class="p-fluid">
+            <p-calendar
+              placeholder="Date of Certification"
+              formControlName="dateOfCert"
+              [monthNavigator]="true"
+              [yearNavigator]="true"
+            ></p-calendar>
+          </td>
+        </tr>
+        <tr class="ng-star-inserted">
+          <td>Vignette</td>
+          <td class="p-fluid">
+            <input pInputText formControlName="vignette"/>
+          </td>
+        </tr>
+        <tr class="ng-star-inserted">
+          <td>Recent Score</td>
+          <td class="p-fluid">
+            <input pInputText formControlName="recentScore"/>
+          </td>
+        </tr>
+        <tr class="ng-star-inserted">
+          <td>Number of times recertified</td>
+          <td class="p-fluid">
+            <input pInputText formControlName="noOfTimesRecertified"/>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <p-toolbar>
+      <ng-template pTemplate="left">
+        <input
+          type="number"
+          formControlName="certificationId"
+          [hidden]="true"
+        />
+        <button
+          pButton
+          label="Update Details"
+          type="submit"
+          [disabled]="
+            certificationDetailsUpdateForm.invalid ||
+            (applicationStateService.isProcessing$ | async)
+          "
+        ></button>
+      </ng-template>
+      <ng-template pTemplate="right">
+        <button
+          pButton
+          label="Cancel"
+          type="button"
+          class="p-button-danger"
+          (click)="cancelUpdate()"
+        ></button>
+      </ng-template>
+    </p-toolbar>
+  </form>
+</div>

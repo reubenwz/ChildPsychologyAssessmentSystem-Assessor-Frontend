@@ -1,0 +1,282 @@
+<div class="col-12" *ngIf="caretakerAssessmentFormService.questionsForIndivDomain$ | async as qns">
+  <div *ngIf="
+      caretakerAssessmentFormService.responseNumberObj$
+        | async as responseNumberObj
+    ">
+    <p-table #dtAssForm [value]="qns" dataKey="questionCode" styleClass="p-datatable-gridlines">
+      <ng-template pTemplate="caption">
+        <div class="p-d-flex p-ai-center p-jc-between">
+          {{ currDomainName }}
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Qn. Code</th>
+          <th>Qn. Title</th>
+          <th>Question</th>
+          <th>Response Number</th>
+          <th>Response Notes (Select Response Number First)</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-question let-expanded="expanded">
+        <p-overlayPanel #opDesc>
+          <ng-template pTemplate>
+            <p-card>
+              <p-table style="border : 0px !important;" [value]="question.questionDescription">
+                <ng-template pTemplate="caption">
+                  {{question.questionCode}} Question Description
+                </ng-template>
+                <ng-template pTemplate="body" let-qnDesc>
+                  <tr>
+                    <td>{{qnDesc}}</td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="summary"></ng-template>
+              </p-table>
+            </p-card>
+          </ng-template>
+        </p-overlayPanel>
+        <p-overlayPanel #opRating>
+          <ng-template pTemplate>
+            <p-table [value]="getRatingsDefArray(question.ratingsDefinition)" styleClass="p-datatable-gridlines">
+              <ng-template pTemplate="caption">Question {{question.questionCode}} Rating Definitions</ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Response Value</th>
+                  <th>Definition</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-ratingDef let-rowIndex="rowIndex">
+                <tr>
+                  <td>{{rowIndex}}</td>
+                  <td>{{ratingDef}}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="summary">
+              </ng-template>
+            </p-table>
+          </ng-template>
+        </p-overlayPanel>
+        <tr>
+          <td style="
+                width: 5%;
+                background-image: linear-gradient(
+                  to bottom,
+                  white,
+                  rgba(116, 198, 253, 0.18)
+                );
+              ">
+            {{ question.questionCode }}
+          </td>
+          <td style="width: 10%">{{ question.questionTitle }}</td>
+          <td style="width: 40%">
+            <button style="float: right;" pButton pRipple type="button" (click)="opDesc.toggle($event)"
+                  icon="pi pi-question" class="p-button-rounded p-button-text p-button-secondary"></button>
+            <!-- {{ question.questionToConsider.join("\n") }} -->
+            <div *ngFor="let qnConsider of question.questionToConsider">
+              <p>{{qnConsider}}</p>
+            </div>
+          </td>
+          <div *ngIf="
+                caretakerAssessmentFormService.isCurrentPageModule;
+                then canSelectNA;
+                else notModuleCannotSelectNA
+              "></div>
+          <ng-template #canSelectNA>
+            <div *ngIf="
+                  question.subModule === undefined;
+                  then toggleDisabled;
+                  else toggleEnabled
+                "></div>
+            <ng-template #toggleDisabled>
+              <td>
+                <button style="float: right;" pButton pRipple type="button" (click)="opRating.toggle($event)"
+                      icon="pi pi-question" class="p-button-rounded p-button-text p-button-secondary"></button>
+                <p-selectButton [options]="responseNumeralsForModule"
+                  [(ngModel)]="responseNumberObj[question.questionCode]" optionLabel="label" optionValue="value"
+                  optionDisabled="inactive">
+                </p-selectButton>
+              </td>
+            </ng-template>
+            <ng-template #toggleEnabled>
+              <td style="
+                    background-image: linear-gradient(
+                      to bottom,
+                      white,
+                      rgba(240, 178, 244, 0.3)
+                    );
+                  ">
+                  <button style="float: right;" pButton pRipple type="button" (click)="opRating.toggle($event)"
+                  icon="pi pi-question" class="p-button-rounded p-button-text p-button-secondary"></button>
+                <p-selectButton [options]="responseNumeralsForModule"
+                  [(ngModel)]="responseNumberObj[question.questionCode]" optionLabel="label" optionValue="value"
+                  optionDisabled="inactive" [pRowToggler]="question" [pRowTogglerDisabled]="
+                      responseNumberObj[question.questionCode] === 0
+                    ">
+                </p-selectButton>
+              </td>
+            </ng-template>
+          </ng-template>
+          <ng-template #notModuleCannotSelectNA>
+            <div *ngIf="
+                  question.subModule === undefined;
+                  then toggleDisabled;
+                  else toggleEnabled
+                "></div>
+            <ng-template #toggleDisabled>
+              <td (click)="opRating.toggle($event)">
+                <p-selectButton [options]="responseNumeralsNotM" optionDisabled="inactive"
+                  [(ngModel)]="responseNumberObj[question.questionCode]" optionLabel="label" optionValue="value">
+                </p-selectButton>
+              </td>
+            </ng-template>
+            <ng-template #toggleEnabled>
+              <td style="
+                    background-image: linear-gradient(
+                      to bottom,
+                      white,
+                      rgba(240, 178, 244, 0.3)
+                    );
+                  " (click)="opRating.toggle($event)">
+                <p-selectButton [options]="responseNumeralsNotM" optionDisabled="inactive"
+                  [(ngModel)]="responseNumberObj[question.questionCode]" optionLabel="label" optionValue="value"
+                  [pRowToggler]="question" [pRowTogglerDisabled]="
+                      responseNumberObj[question.questionCode] === 0
+                    ">
+                </p-selectButton>
+              </td>
+            </ng-template>
+          </ng-template>
+
+          <td style="width: 20%" *ngIf="
+                caretakerAssessmentFormService.responseNotesObj$
+                  | async as responseNotesObj
+              ">
+            <textarea [rows]="5" [cols]="30" pInputTextarea [autoResize]="true"
+              [disabled]="responseNumberObj[question.questionCode] === -2"
+              [(ngModel)]="responseNotesObj[question.questionCode]"></textarea>
+          </td>
+        </tr>
+
+
+      </ng-template>
+
+      <!-- Start Row Expansion -->
+
+      <ng-template pTemplate="rowexpansion" let-question>
+        <tr #expansionRow *ngIf="responseNumberObj[question.questionCode] > 0">
+          <td colspan="12">
+            <div class="p-p-3">
+              <p-table [value]="question.subModule.subQues" dataKey="id">
+                <ng-template pTemplate="caption">
+                  <div class="p-d-flex p-ai-center p-jc-between">
+                    {{ question.subModule.subModuleName }}
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+        <tr id="expandedRowHeaders">
+          <th>Qn. Code</th>
+          <th>Qn. Title</th>
+          <th style="width: 30%">Question</th>
+          <th>Response Number</th>
+          <th>Response Notes</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-subQues>
+        <tr>
+          <td style="
+                        background-image: linear-gradient(
+                          to bottom,
+                          white,
+                          rgba(240, 178, 244, 0.3)
+                        );
+                      ">
+            {{ subQues.questionCode }}
+          </td>
+          <td>{{ subQues.questionTitle }}</td>
+          <td>{{ subQues.questionDescription.join("\n") }}</td>
+          <td >
+            <p-selectButton [options]="responseNumeralsNotM" optionDisabled="inactive"
+              [(ngModel)]="responseNumberObj[subQues.questionCode]" optionLabel="label" optionValue="value">
+            </p-selectButton>
+          </td>
+          <td style="width: 20%" *ngIf="
+                        caretakerAssessmentFormService.responseNotesObj$
+                          | async as responseNotesObj
+                      ">
+            <textarea [rows]="5" [cols]="30" pInputTextarea [autoResize]="true" [disabled]="
+                          responseNumberObj[subQues.questionCode] === -2
+                        " [(ngModel)]="responseNotesObj[subQues.questionCode]"></textarea>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary"></ng-template>
+    </p-table>
+  </div>
+  </td>
+  </tr>
+  </ng-template>
+  <!-- End Row Expansion -->
+
+  <ng-template pTemplate="summary">
+    <!-- <p-button
+          *ngIf="caretakerAssessmentFormService.isCurrentPageLastPage"
+          label="Save & Go Back"
+          class="p-button-success"
+          (onClick)="backtoClientAssessment()"
+        ></p-button> -->
+  </ng-template>
+  </p-table>
+
+</div>
+<br />
+
+<div class="p-grid" style="float: left;">
+  <button pButton class="p-button-warning p-button-raised" icon="pi pi-chevron-left" iconPos="left"
+    *ngIf="!caretakerAssessmentFormService.isCurrentPageFirstPage" pTooltip="Save and Go Back" label="Previous"
+    (click)="previousButtonClick()">
+  </button>
+</div>
+
+<div class="p-grid" style="float: right;">
+
+  <button pButton *ngIf="!caretakerAssessmentFormService.isCurrentPageLastPage" label="Save"
+    class="p-button-raised p-button-secondary" icon="pi pi-save" pTooltip="Save Current Responses"
+    (click)="saveButtonClick()">
+  </button>
+
+  <button pButton class="p-button-info p-button-raised" icon="pi pi-chevron-right" iconPos="right"
+    (click)="saveAndNextButtonClick()" style="margin-left: 10px;" pTooltip="Save and Go Next"
+    *ngIf="!caretakerAssessmentFormService.isCurrentPageLastPage" label="Next">
+  </button>
+
+  <button pButton *ngIf="caretakerAssessmentFormService.isCurrentPageLastPage" label="Submit Caretaker Assessment"
+    pTooltip="Submit and Return to Client Assessment" icon="pi pi-check-circle" iconPos="right"
+    class="p-button-raised p-button-success" (click)="submitButtonClick()">
+  </button>
+</div>
+<br>
+
+</div>
+
+
+<p-toast position="bottom-center" key="bc"></p-toast>
+<p-toast position="bottom-center" key="c" (onClose)="onReject()" [baseZIndex]="5000">
+  <ng-template let-message pTemplate="message">
+    <div class="p-flex p-flex-column" style="flex: 1">
+      <div class="p-text-center">
+        <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+        <h4>{{message.summary}}</h4>
+        <p>{{message.detail}}</p>
+      </div>
+      <div class="p-grid p-fluid">
+        <div class="p-col-6">
+          <button type="button" pButton (click)="onConfirm()" label="Yes" class="p-button-success"></button>
+        </div>
+        <div class="p-col-6">
+          <button type="button" pButton (click)="onReject()" label="No" class="p-button-secondary"></button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>

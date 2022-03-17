@@ -1,0 +1,15 @@
+<div *ngIf="navbarService.items$ | async as items">
+  <div class="burger-menu" (click)="navbarService.showMenu()" *ngIf="!navbarService.visible">
+    <button pButton type="button" class="p-button-plain p-button-outlined p-button-lg" icon="pi pi-bars"
+            iconPos="left"></button>
+  </div>
+  <p-sidebar [(visible)]="navbarService.visible" [modal]="true" [dismissible]="false" [showCloseIcon]="true"
+             styleClass="p-sidebar-sm">
+    <div class="grid-nogutter p-fluid">
+      <button *ngFor="let item of items" pButton type="button" [label]="item.label" class="p-button-plain p-button-text"
+              [routerLink]="item.routerLink"
+              [icon]="item.icon">
+      </button>
+    </div>
+  </p-sidebar>
+</div>

@@ -1,0 +1,20 @@
+<app-header></app-header>
+<app-navbar></app-navbar>
+<div id="main_container" key="assessor-main-dash">
+    <div class="grid justify-content-center">
+        <div class="col-12">
+            <p-card [style]="styleForm">
+                <h1>Currently Assessing: {{kidName}}</h1>
+                <p-progressBar></p-progressBar>
+                <br>
+                <div *ngIf="assessmentService.questionDomainMenu$| async as items">
+                    <p-steps [(activeIndex)]="activeIdx" [model]="items" [readonly]="false"  (activeIndexChange)="stepButtonClick($event)"></p-steps>
+                </div>
+                <br/>
+                <p-progressBar></p-progressBar> 
+                <router-outlet name="assForm" ></router-outlet>         
+            </p-card>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

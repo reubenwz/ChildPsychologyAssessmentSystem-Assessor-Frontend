@@ -1,0 +1,252 @@
+<app-header></app-header>
+<app-navbar></app-navbar>
+<div class="grid justify-content-center" *ngIf="assessorService.specificAssessor$ | async as assessor">
+  <div class="col-12">
+    <p-toolbar styleClass="p-mb-4">
+      <ng-template pTemplate="left">
+        <button pButton pRipple label="Back to Employee Management" icon="pi pi-chevron-left"
+          routerLink="/dashboard/organisations/{{assessorService.currentOrganisationId}}"></button>
+      </ng-template>
+    </p-toolbar>
+  </div>
+  <p-card class="col-12">
+    <div class="col-12">
+      <h2>Assessor Details</h2>
+    </div>
+    <div class="col-12" *ngIf="(viewSpecificAssessor.editMode$ | async) === false">
+      <div class="p-datatable-gridlines p-datatable p-component p-datatable-responsive-scroll">
+        <div class="p-datatable-wrapper">
+          <table role="table" class="p-datatable-table ng-star-inserted">
+            <tbody class="p-element p-datatable-tbody">
+              <tr class="ng-star-inserted">
+                <td>Email</td>
+                <td>{{assessor.email}}</td>
+              </tr>
+              <tr class="ng-star-inserted">
+                <td>Name</td>
+                <td>{{assessor.name}}</td>
+              </tr>
+              <!-- <tr class="ng-star-inserted">
+                <td>Organisation</td>
+                <td>{{assessorService.currentOrganisationName}}</td>
+              </tr> -->
+              <tr class="ng-star-inserted">
+                <td>Supervisor</td>
+                <td><a routerLink="/dashboard/assessors/{{assessor.supervisor.assessorId}}"
+                    *ngIf="assessor.supervisor">{{assessor.supervisor.name + ' (' + assessor.supervisor.email +
+                    ')'}}</a>
+                  <span *ngIf="!assessor.supervisor">No Supervisor Assigned</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="p-datatable-footer ng-star-inserted">
+          <button pButton label="Edit Assessor" type="button" (click)="enableEditing()"
+            [disabled]="this.applicationStateService.isProcessing$ | async"></button>
+        </div>
+      </div>
+    </div>
+  </p-card>
+
+  <app-update-specific-assessor *ngIf="viewSpecificAssessor.editMode$ | async"></app-update-specific-assessor>
+
+  <p-card class="col-12">
+    <div class="col-12">
+      <h2>Clients</h2>
+    </div>
+    <div class="col-12">
+      <p-table [value]="assessor.clients ? assessor.clients : []" [rows]="30" [paginator]="true"
+        responsiveLayout="scroll" [rowHover]="true" dataKey="clientId"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="clientUniqueId">
+              Client Unique ID
+              <p-sortIcon field="clientUniqueId"></p-sortIcon>
+            </th>
+            <th pSortableColumn="idNumber">
+              NRIC
+              <p-sortIcon field="idNumber"></p-sortIcon>
+            </th>
+            <th pSortableColumn="name">
+              Name
+              <p-sortIcon field="name"></p-sortIcon>
+            </th>
+            <th pSortableColumn="gender">
+              Gender
+              <p-sortIcon field="gender"></p-sortIcon>
+            </th>
+            <th pSortableColumn="dob">
+              Date of Birth
+              <p-sortIcon field="dob"></p-sortIcon>
+            </th>
+            <th pSortableColumn="ethnicity">
+              Ethnicity
+              <p-sortIcon field="ethnicity"></p-sortIcon>
+            </th>
+            <th>Action</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>
+              <p-columnFilter type="text" field="idNumber"></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter type="text" field="name"></p-columnFilter>
+            </th>
+            <th>
+              <p-columnFilter type="text" field="gender"></p-columnFilter>
+            </th>
+            <th></th>
+            <th>
+              <p-columnFilter type="text" field="ethnicity"></p-columnFilter>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-client>
+          <tr>
+            <td>{{ client.clientUniqueId }}</td>
+            <td>{{ client.idNumber }}</td>
+            <td>{{ client.name }}</td>
+            <td>{{ client.gender }}</td>
+            <td>{{ client.dob | date }}</td>
+            <td>{{ client.ethnicity }}</td>
+            <td>
+              <button pButton pRipple label="View Details" icon="pi pi-user-edit" class="p-button-help p-button-rounded"
+                (click)="viewClientDetails(client)"></button>
+            </td>
+            <!-- routerLink="/dashboard/clientsDialog/{{client.clientId}}" -->
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-card>
+
+  <p-card class="col-12">
+    <div class="col-12">
+      <h2>Assessments</h2>
+    </div>
+    <div class="col-12">
+      <p-table [value]="assessor.assessments ? assessor.assessments : []" [rows]="30" [paginator]="true"
+        responsiveLayout="scroll" [rowHover]="true" dataKey="assessmentId"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>
+              Assessment Unique Id
+            </th>
+            <th>
+              Assessment Date
+            </th>
+            <th>
+              Status
+            </th>
+            <th>
+              Reason
+            </th>
+            <th>Approved Date</th>
+            <th>LOC</th>
+            <th>Client</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-assessment>
+          <tr>
+            <td>{{assessment.assessmentUniqueId}}</td>
+            <td>{{assessment.assessmentDate | date}}</td>
+            <td>{{assessment.status ? assessment.status : 'No Status Available'}}</td>
+            <td>{{assessment.reason ? assessment.reason : 'No Reason Available'}}</td>
+            <td>{{assessment.approvedDate ? (assessment.approvedDate | date) : 'No Approved Date'}}</td>
+            <td>{{assessment.loc ? assessment.loc : 'No LOC Available'}}</td>
+            <td><a routerLink="/dashboard/clients/{{assessment.client.clientId}}">{{assessment.client.name}}
+                ({{assessment.client.clientUniqueId}})</a>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-card>
+
+  <p-card class="col-12">
+    <div class="col-12">
+      <h2>Certificates</h2>
+    </div>
+    <div class="col-12">
+      <p-table [value]="assessor.certificates ? assessor.certificates : []" [rows]="30" [paginator]="true"
+        responsiveLayout="scroll" [rowHover]="true" dataKey="certificationId"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>
+              Date of Certification
+            </th>
+            <th>
+              Vignette
+            </th>
+            <th>
+              Recent Score
+            </th>
+            <th>
+              Number Of Times Recertified
+            </th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-certification>
+          <tr>
+            <td>{{certification.dateOfCert | date}}</td>
+            <td>{{certification.vignette}}</td>
+            <td>{{certification.recentScore}}</td>
+            <td>{{certification.noOfTimesRecertified}}</td>
+            <td>
+              <button pButton pRipple label="Delete" icon="pi pi-user-edit" class="p-button-danger p-button-rounded"
+                (click)="removeCertification($event, certification)"
+                [disabled]="this.applicationStateService.isProcessing$ | async"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-card>
+
+  <p-card class="col-12">
+    <div class="col-12">
+      <h2>Supervisee</h2>
+    </div>
+    <div class="col-12">
+      <p-table [value]="assessor.supervisee ? assessor.supervisee : []" [rows]="30" [paginator]="true"
+        responsiveLayout="scroll" [rowHover]="true" dataKey="assessmentId"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>
+              Email
+            </th>
+            <th>
+              Name
+            </th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-supervisee>
+          <tr>
+            <td>{{supervisee.email}}</td>
+            <td>{{supervisee.name}}</td>
+            <td>
+              <button pButton pRipple label="View Assessor" icon="pi pi-user-edit"
+                class="p-button-help p-button-rounded"
+                routerLink="/dashboard/assessors/{{supervisee.assessorId}}"></button>
+              <button pButton pRipple label="Remove Relationship" icon="pi pi-user-edit"
+                class="p-button-danger p-button-rounded" (click)="removeSupervisee($event, supervisee)"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <p-confirmPopup [baseZIndex]='101' key="deleteConfirmationPopup"></p-confirmPopup>
+    </div>
+  </p-card>
+
+
+</div>
+<app-footer></app-footer>

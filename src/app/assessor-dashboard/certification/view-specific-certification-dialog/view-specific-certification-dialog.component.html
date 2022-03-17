@@ -1,0 +1,42 @@
+<div
+  class="grid"
+  *ngIf="certificationService.specificCertification$ | async as certification"
+>
+  <div class="p-datatable-gridlines p-datatable p-component p-datatable-responsive-scroll"
+       *ngIf="(editMode$ | async) === false">
+    <div class="p-datatable-wrapper">
+      <table role="table" class="p-datatable-table ng-star-inserted">
+        <tbody class="p-element p-datatable-tbody">
+        <tr class="ng-star-inserted">
+          <td>Date of Cert</td>
+          <td>{{ certification.dateOfCert | date }}</td>
+        </tr>
+        <tr class="ng-star-inserted">
+          <td>Vignette</td>
+          <td>{{ certification.vignette }}</td>
+        </tr>
+        <tr class="ng-star-inserted">
+          <td>Recent Score</td>
+          <td>{{ certification.recentScore }}</td>
+        </tr>
+        <tr class="ng-star-inserted">
+          <td>Number of times recertified</td>
+          <td>{{ certification.noOfTimesRecertified }}</td>
+        </tr>
+        <tr class="ng-star-inserted">
+          <td>Assessor</td>
+          <td>{{ certification.assessor ? certification.assessor.email : 'No Assessor' }}</td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="p-datatable-footer ng-star-inserted">
+        <button pButton type="button" label="Edit Details" (click)="enableEditing()"></button>
+      </div>
+    </div>
+  </div>
+  <app-update-specific-certification
+    (disableEditingEvent)="disableEditing()"
+    *ngIf="editMode$ | async"
+  ></app-update-specific-certification>
+</div>
+

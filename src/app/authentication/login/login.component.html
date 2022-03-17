@@ -1,0 +1,104 @@
+<app-header></app-header>
+<div id="mid" class="grid justify-content-center align-items-center">
+  <div class="col-12 lg:col-6">
+    <div class="main-text-content">
+      <h2>Welcome to the CANS Assessor Portal</h2>
+      <p>
+        The Child and Adolescent Needs and Strengths (CANS) is an assessment tool
+        from the United States which has been adapted and validated for use in
+        Singapore. Designed as a communimetric tool – the CANS provides a common
+        language to communicate about clients’ needs and strengths. This allows
+        social service professionals to work together more effectively to improve
+        the outcomes of clients and families served. With the CANS Online
+        application, data can now be collected to support </p>
+        <p>(i) outcome management;</p>
+        <p>(ii) evaluation of services and programmes; as well as</p>
+        <p>(iii) research on
+            sector needs to inform and guide policy makers in terms of resource
+            planning and allocation.</p> 
+        <p>
+        We thank you for your patience while we continue
+        to make enhancements to the CANS Online and look forward to serving you as
+        an integral partner in the use of CANS in the child welfare sector.
+      </p>
+    </div>
+  </div>
+  <p-card class="col-12 lg:col-6">
+    <form
+      class="col-12"
+      [formGroup]="loginForm"
+      novalidate
+      (submit)="login()"
+      style="margin: auto"
+    >
+      <p style="font-size: small">
+        Protected portal. Please contact administrator for account creation.
+      </p>
+      <div class="col-12">
+        <h1>Assessor Sign In</h1>
+
+        <p-messages
+          severity="error"
+          *ngIf="errorMessage$ | async as errorMessage"
+        >
+          <ng-template pTemplate>
+            <span class="custom-message">{{ errorMessage }}</span>
+          </ng-template>
+        </p-messages>
+      </div>
+      <div class="grid-nogutter">
+        <div class="col-12">
+          <div class="p-inputgroup">
+              <span class="p-inputgroup-addon"
+              ><i class="pi pi-inbox"></i
+              ></span>
+            <input
+              type="email"
+              pInputText
+              placeholder="Email"
+              formControlName="email"
+            />
+          </div>
+        </div>
+        &nbsp;
+        <div class="col-12">
+          <div class="p-inputgroup">
+            <span class="p-inputgroup-addon"><i class="pi pi-lock"></i></span>
+            <input
+              type="password"
+              pInputText
+              placeholder="Password"
+              formControlName="password"
+            />
+          </div>
+        </div>
+        &nbsp;
+        <div class="col-12 lg:col-12 md:col-6">
+          <div class="p-inputgroup">
+            <button
+              pButton
+              class="full-width-button-orange"
+              label="Sign In"
+              type="submit"
+              [disabled]="(processing$ | async) || this.loginForm.invalid"
+            ></button>
+          </div>
+        </div>
+        &nbsp;
+        <div class="col-12 lg:col-12 md:col-6">
+          <div class="p-inputgroup">
+            <button
+              pButton
+              class="full-width-button-blue"
+              label="Reset Password"
+              type="button"
+              routerLink="../password-reset"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </p-card>
+</div>
+
+<app-footer></app-footer>

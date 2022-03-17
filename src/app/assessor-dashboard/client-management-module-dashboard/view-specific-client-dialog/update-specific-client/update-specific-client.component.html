@@ -1,0 +1,170 @@
+<div class="col-12" *ngIf="clientService.specificClient$ | async as client">
+  <form [formGroup]="clientDetailsUpdateForm" (submit)="updateClient()">
+    <div
+      class="
+        p-datatable-gridlines
+        p-datatable
+        p-component
+        p-datatable-responsive-scroll
+      "
+    >
+      <table role="table" class="p-datatable-table ng-star-inserted">
+        <tbody class="p-element p-datatable-tbody">
+          <tr class="ng-star-inserted">
+            <td>Client Unique ID</td>
+            <td class="p-fluid">
+              <input
+                pInputText
+                type="number"
+                formControlName="clientUniqueId"
+              />
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Name</td>
+            <td class="p-fluid">
+              <input pInputText formControlName="name" />
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Address</td>
+            <td class="p-fluid">
+              <input pInputText formControlName="address" />
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>NRIC</td>
+            <td class="p-fluid">
+              <input pInputText formControlName="idNumber" />
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Gender</td>
+            <td
+              class="p-fluid"
+              *ngIf="gendersService.genders$ | async as genders"
+            >
+              <p-dropdown
+                placeholder="Gender"
+                [options]="genders"
+                formControlName="gender"
+              ></p-dropdown>
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Date of Birth</td>
+            <td class="p-fluid">
+              <p-calendar
+                placeholder="Date of Birth"
+                formControlName="dob"
+                [baseZIndex]="101"
+              ></p-calendar>
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Ethnicity</td>
+            <td class="p-fluid">
+              <p-dropdown
+                placeholder="Select Ethnicity"
+                [options]="ethnicity"
+                formControlName="ethnicity"
+                optionLabel="name"
+                optionValue="code"
+              ></p-dropdown>
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Admission Type</td>
+            <td class="p-fluid">
+              <input pInputText formControlName="admissionType" />
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Placement Type</td>
+            <td class="p-fluid">
+              <input pInputText formControlName="placementType" />
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Accommodation Status</td>
+            <td class="p-fluid">
+              <p-dropdown
+                placeholder="Select Accommodation Status"
+                [options]="accommodationStatus"
+                formControlName="accommodationStatus"
+                optionLabel="name"
+                optionValue="code"
+              ></p-dropdown>
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Accommodation Type</td>
+            <td class="p-fluid">
+              <p-dropdown
+                placeholder="Select Accommodation Type"
+                [options]="accommodationType"
+                formControlName="accommodationType"
+                optionLabel="name"
+                optionValue="code"
+              ></p-dropdown>
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Education Level</td>
+            <td class="p-fluid">
+              <p-dropdown
+                placeholder="Select Education Level"
+                [options]="educationLevel"
+                formControlName="educationLevel"
+                optionLabel="name"
+                optionValue="code"
+              ></p-dropdown>
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Current Occupation</td>
+            <td class="p-fluid">
+              <input pInputText formControlName="currentOccupation" />
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Monthly Income</td>
+            <td class="p-fluid">
+              <input pInputText type="number" formControlName="monthlyIncome" />
+            </td>
+          </tr>
+          <tr class="ng-star-inserted">
+            <td>Assessor</td>
+            <td class="p-fluid">
+              <input pInputText formControlName="assessorEmail" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p-toolbar>
+      <ng-template pTemplate="left">
+        <input type="number" formControlName="clientId" [hidden]="true" />
+        <input type="hidden" formControlName="assessorEmail" />
+        <button
+          pButton
+          label="Update Details"
+          type="submit"
+          [disabled]="
+            clientDetailsUpdateForm.invalid ||
+            (applicationStateService.isProcessing$ | async)
+          "
+        ></button>
+      </ng-template>
+      <ng-template pTemplate="right">
+        <button
+          pButton
+          label="Cancel"
+          type="button"
+          class="p-button-danger"
+          (click)="cancelUpdate()"
+        ></button>
+      </ng-template>
+    </p-toolbar>
+  </form>
+</div>

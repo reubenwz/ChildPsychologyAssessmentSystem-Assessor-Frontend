@@ -1,0 +1,69 @@
+<app-header></app-header>
+
+<app-navbar></app-navbar>
+<div id="main-content" [ngClass]="{ expanded: navbarService.visible }">
+  <span class="page-header grid justify-content-center">
+    <h1>Certification</h1>
+  </span>
+  <div class="grid justify-content-center">
+    <div class="col-12">
+      <div class="card">
+        <p-toolbar styleClass="p-mb-4">
+          <ng-template pTemplate="left">
+            <button pButton pRipple label="Add" icon="pi pi-plus" class="orange-button"
+                    (click)="openCreateCertificationDialog()"></button>
+          </ng-template>
+        </p-toolbar>
+
+        <div *ngIf="
+            certificationService.existingCertifications$
+              | async as existingCertifications
+          ">
+          <p-table [value]="existingCertifications" [rows]="30" [paginator]="true" [globalFilterFields]="['name']"
+                   responsiveLayout="scroll" [rowHover]="true" dataKey="certificationId"
+                   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                   [showCurrentPageReport]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="dateOfCert">
+                  Date of Cert
+                  <p-sortIcon field="dateOfCert"></p-sortIcon>
+                </th>
+                <th>Vignette</th>
+                <th pSortableColumn="recentScore">
+                  Score
+                  <p-sortIcon field="recentScore"></p-sortIcon>
+                </th>
+                <th>Action</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-certification>
+              <tr>
+                <td>{{ certification.dateOfCert | date: "dd MMMM yyyy" }}</td>
+                <td>{{ certification.vignette }}</td>
+                <td>{{ certification.recentScore }}</td>
+                <td>
+                  <button pButton pRipple label="View Certificate" icon="pi pi-pencil"
+                          class="p-button-rounded p-button-info"
+                          (click)="viewCertificationDetails(certification)"></button>
+                  <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                          (click)="deleteCertificate(certification.certificationId)"></button>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+              <div class="p-d-flex p-ai-center p-jc-between">
+                In total there are {{ existingCertifications.length }}
+                certifications.
+              </div>
+            </ng-template>
+
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
+

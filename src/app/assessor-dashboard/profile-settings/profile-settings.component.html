@@ -1,0 +1,41 @@
+<app-header></app-header>
+<div id="main-container">
+  <app-navbar></app-navbar>
+  <div id="main-content" [ngClass]="{'expanded': navbarService.visible}">
+    <div class="grid justify-content-center">
+      <div
+        class="
+      lg:col-10
+      md:col-12
+      sm:col-offset-0 sm:col-12
+    ">
+      </div>
+      <p-card>
+        <div class="grid">
+          <div class="col-12">
+            <h1>Profile Settings</h1>
+            <p>Change your profile's settings or password.</p>
+          </div>
+          <div class="col-12">
+            <p-tabView>
+              <p-tabPanel header="Settings">
+                <ng-template pTemplate="content">
+                  <app-update-profile-form></app-update-profile-form>
+                </ng-template>
+              </p-tabPanel>
+              <p-tabPanel header="Password">
+                <ng-template pTemplate="content">
+                  <app-update-password-form></app-update-password-form>
+                </ng-template>
+              </p-tabPanel>
+            </p-tabView>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+</div>
+<div>
+  <br/>
+</div>
+<app-footer></app-footer>

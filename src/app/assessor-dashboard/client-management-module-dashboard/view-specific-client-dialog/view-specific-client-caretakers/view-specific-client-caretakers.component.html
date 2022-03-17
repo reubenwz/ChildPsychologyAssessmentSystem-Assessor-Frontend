@@ -1,0 +1,87 @@
+<div class="col-12">
+  <h2>Caregivers</h2>
+  &nbsp;
+  <button
+    pButton
+    label="Create Caregiver"
+    type="button"
+    (click)="addCaretakerToCurrentClient()"
+    [disabled]="applicationStateService.isProcessing$ | async"
+  ></button>
+</div>
+<div class="col-12" *ngIf="clientService.specificClient$ | async as client">
+  <p-table
+    [value]="client.caretakers ? client.caretakers : []"
+    [rows]="30"
+    [paginator]="true"
+    responsiveLayout="scroll"
+    [rowHover]="true"
+    dataKey="caretakerId"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Unique Id</th>
+        <th>Name</th>
+        <th>NRIC</th>
+        <th>Gender</th>
+        <th>Date of Birth</th>
+        <th>Relationship with Client</th>
+        <th>Address</th>
+        <th>Education Level</th>
+        <th>Current Occupation</th>
+        <th>Monthly Income</th>
+        <th>Accommodation Status</th>
+        <th>Accommodation Type</th>
+        <th>Active</th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-caretaker>
+      <tr>
+        <td>{{ caretaker.caretakerUniqueId }}</td>
+        <td>{{ caretaker.name }}</td>
+        <td>{{ caretaker.idNumber }}</td>
+        <td>{{ caretaker.gender }}</td>
+        <td>{{ caretaker.dob | date }}</td>
+        <td>{{ caretaker.relationshipToClient }}</td>
+        <td>{{ caretaker.address }}</td>
+        <td>{{ caretaker.educationLevel }}</td>
+        <td>{{ caretaker.currentOccupation }}</td>
+        <td>{{ caretaker.monthlyIncome | currency }}</td>
+        <td>{{ caretaker.accommodationStatus }}</td>
+        <td>{{ caretaker.accommodationType }}</td>
+        <td>
+          <button
+            pButton
+            pRipple
+            [label]="caretaker.active ? 'Active' : 'Inactive'"
+            [ngClass]="{
+              'p-button-success': caretaker.active,
+              'p-button-info': !caretaker.active
+            }"
+            type="button"
+            (click)="toggleCaretakerStatus($event, caretaker.caretakerId)"
+            [disabled]="applicationStateService.isProcessing$ | async"
+          ></button>
+        </td>
+        <td>
+          <button
+            pButton
+            pRipple
+            label="Delete Caregiver"
+            class="p-button-danger"
+            type="button"
+            (click)="deleteCaretaker($event, caretaker.caretakerId)"
+            [disabled]="applicationStateService.isProcessing$ | async"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-confirmPopup
+    [baseZIndex]="101"
+    key="deleteConfirmationPopup"
+  ></p-confirmPopup>
+</div>

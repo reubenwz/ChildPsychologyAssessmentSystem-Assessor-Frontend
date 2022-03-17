@@ -1,0 +1,186 @@
+<p-card>
+  <div class="grid">
+    <div class="col-12">
+      <p-messages [(value)]="messages" [enableService]="false"></p-messages>
+      <p-messages
+        *ngIf="
+          toptraumaTraumapercentageServiceService.errorMessage$
+            | async as errMsg
+        "
+        >{{ errMsg }}</p-messages
+      >
+      <div *ngIf="dashboardPresentationService.presentationMode$ | async">
+        <h1>Top Trauma & Trauma Percentage</h1>
+      </div>
+
+      <div [hidden]="dashboardPresentationService.presentationMode$ | async">
+        <div class="grid">
+          <h1>Top Trauma & Trauma Percentage</h1>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-info"
+            class="p-button-rounded"
+            pTooltip="The top Trauma chart displays the number of clients of each organisation suffering from a specific category of trauma such as Neglect, Sexual Abuse, Witness to Domestic Violence, etc.
+          Trauma percentage bar chart shows the proportion of an organisation’s clients suffering from a specific category of trauma."
+            style="width: 25px; height: 25px"
+          ></button>
+        </div>
+      </div>
+      <br />
+      <form
+        [formGroup]="toptraumaTraumapercentageFormGroup"
+        novalidate
+        [hidden]="dashboardPresentationService.presentationMode$ | async"
+      >
+        <br />
+        <div class="grid">
+          <!-- Start Age Input with p-dropdown -->
+          <div
+            class="lg:col-3 md:col-6 sm:col-12"
+            *ngIf="
+              toptraumaTraumapercentageServiceService.startAge$
+                | async as startAge
+            "
+          >
+            <div class="p-fluid">
+              <span class="p-float-label">
+                <p-dropdown
+                  placeholder="Start Age"
+                  inputId="startAge"
+                  [options]="startAge"
+                  formControlName="startAge"
+                  optionLabel="individualRange"
+                  optionValue="individualRangeCode"
+                  (onChange)="updateInformationSelection()"
+                >
+                </p-dropdown>
+                <label for="startAge">Start Age</label>
+              </span>
+            </div>
+          </div>
+          <!-- finish Start Age Input with p-dropdown -->
+
+          <!-- End age Input with p-dropdown -->
+          <div
+            class="lg:col-3 md:col-6 sm:col-12"
+            *ngIf="
+              toptraumaTraumapercentageServiceService.endAge$ | async as endAge
+            "
+          >
+            <div class="p-fluid">
+              <span class="p-float-label">
+                <p-dropdown
+                  placeholder="End Age"
+                  inputId="endAge"
+                  [options]="endAge"
+                  formControlName="endAge"
+                  optionLabel="individualRange"
+                  optionValue="individualRangeCode"
+                  (onChange)="updateInformationSelection()"
+                >
+                </p-dropdown>
+                <label for="endAge">End Age</label>
+              </span>
+            </div>
+          </div>
+          <!-- finish End age Input with p-dropdown -->
+          <!-- finish Age Group Input with p-dropdown -->
+        </div>
+        <div class="grid">
+          <!-- race input -->
+          <div class="lg:col-3 md:col-6 sm:col-12">
+            <div
+              *ngIf="
+                toptraumaTraumapercentageServiceService.race$ | async as race
+              "
+            >
+              <div class="p-fluid">
+                <p-multiSelect
+                  [options]="race"
+                  [(ngModel)]="selectedRaces"
+                  (onChange)="logSelectedRaces()"
+                  placeholder="Select Race(s)"
+                  [ngModelOptions]="{ standalone: true }"
+                  scrollHeight="250px"
+                  display="chip"
+                  optionLabel="individualRange"
+                  optionValue="individualRangeCode"
+                ></p-multiSelect>
+              </div>
+            </div>
+          </div>
+          <!-- finish race input -->
+
+          <!-- gender input -->
+          <div class="lg:col-3 md:col-6 sm:col-12">
+            <div
+              *ngIf="
+                toptraumaTraumapercentageServiceService.gender$
+                  | async as gender
+              "
+            >
+              <div class="p-fluid">
+                <p-multiSelect
+                  [options]="gender"
+                  [(ngModel)]="selectedGenders"
+                  (onChange)="logSelectedGenders()"
+                  placeholder="Select Gender(s)"
+                  [ngModelOptions]="{ standalone: true }"
+                  scrollHeight="250px"
+                  display="chip"
+                  optionLabel="individualRange"
+                  optionValue="individualRangeCode"
+                ></p-multiSelect>
+              </div>
+            </div>
+          </div>
+          <!-- finish gender input -->
+        </div>
+      </form>
+      <div class="grid">
+        <div class="lg:col-6 md:col-6 sm:col-12">
+          <div
+            *ngIf="
+              toptraumaTraumapercentageServiceService.toptraumaDisplayData$
+                | async as toptraumaData
+            "
+          >
+            <div
+              *ngIf="
+                toptraumaTraumapercentageServiceService.toptraumaBarChartOptions$
+                  | async as toptraumaOptions
+              "
+            >
+              <canvas id="toptraumaChart" style="height: 400px"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="lg:col-6 md:col-6 sm:col-12">
+          <div
+            *ngIf="
+              toptraumaTraumapercentageServiceService.traumapercentageDisplayData$
+                | async as traumapercentageData
+            "
+          >
+            <div
+              *ngIf="
+                toptraumaTraumapercentageServiceService.traumapercentageBarChartOptions$
+                  | async as traumapercentageOptions
+              "
+            >
+              <canvas id="traumapercentageChart" style="height: 400px"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div [hidden]="dashboardPresentationService.presentationMode$ | async">
+        <p-colorPicker
+          [(ngModel)]="color"
+          (onChange)="sendColorToService()"
+          pTooltip="Select color, then click on bar to highlight"
+        ></p-colorPicker>
+      </div>
+    </div>
+  </div>
+</p-card>

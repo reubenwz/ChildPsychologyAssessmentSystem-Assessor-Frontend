@@ -1,0 +1,111 @@
+<span class="page-header grid justify-content-center">
+  <h1>Assessor Management</h1>
+</span>
+<p-toolbar styleClass="p-mb-4">
+  <ng-template pTemplate="left">
+    <button
+      pButton
+      pRipple
+      label="Create Assessor"
+      icon="pi pi-plus"
+      (click)="openCreateAssessorDialog()"
+      [disabled]="
+        (this.organisationManagementService.selectedOrganisation$ | async) ===
+        null
+      "
+    ></button>
+  </ng-template>
+</p-toolbar>
+<div *ngIf="assessorService.existingAssessors$ | async as assessors">
+  <p-table
+    [value]="assessors"
+    [rows]="30"
+    [paginator]="true"
+    responsiveLayout="scroll"
+    [rowHover]="true"
+    dataKey="assessorId"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="email">
+          Email
+          <p-sortIcon field="email"></p-sortIcon>
+        </th>
+        <th pSortableColumn="name">
+          Name
+          <p-sortIcon field="name"></p-sortIcon>
+        </th>
+        <th pSortableColumn="root">
+          Privilege
+          <p-sortIcon field="root"></p-sortIcon>
+        </th>
+        <th pSortableColumn="active">
+          Active
+          <p-sortIcon field="active"></p-sortIcon>
+        </th>
+        <th>Action</th>
+      </tr>
+      <tr>
+        <th>
+          <p-columnFilter type="text" field="email"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="name"></p-columnFilter>
+        </th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-assessor>
+      <tr>
+        <td>{{ assessor.email }}</td>
+        <td>{{ assessor.name }}</td>
+        <td>{{ assessor.root ? "Org Admin" : "Assessor" }}</td>
+        <td>
+          <button
+            pButton
+            pRipple
+            [label]="assessor.active ? 'Active' : 'Inactive'"
+            [ngClass]="{
+              'p-button-success': assessor.active,
+              'p-button-info': !assessor.active
+            }"
+            type="button"
+            (click)="openAssessorActiveToggleDialog(assessor)"
+            *ngIf="!assessor.root"
+            [disabled]="this.applicationStateService.isProcessing$ | async"
+          ></button>
+          <span *ngIf="assessor.root">Active</span>
+        </td>
+        <td>
+          <button
+            pButton
+            pRipple
+            label="View Assessor"
+            icon="pi pi-user-edit"
+            class="p-button-help p-button-rounded blue-button"
+            routerLink="/dashboard/assessors/{{ assessor.assessorId }}"
+          ></button>
+          <button
+            pButton
+            pRipple
+            *ngIf="!assessor.root"
+            label="Delete"
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-warning orange-button"
+            (click)="openDeleteAssessorDialog(assessor)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="p-d-flex p-ai-center p-jc-between">
+        In total there are
+        {{ assessors ? assessors.length : 0 }} assessors.
+      </div>
+    </ng-template>
+  </p-table>
+</div>

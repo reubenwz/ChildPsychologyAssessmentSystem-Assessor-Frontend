@@ -1,0 +1,43 @@
+<div class="grid">
+  <div class="col-12">
+    <form [formGroup]="deleteAssessorForm" (submit)="deleteAssessor()">
+      <div class="p-datatable-gridlines p-datatable p-component p-datatable-responsive-scroll">
+        <div class="p-datatable-wrapper">
+          <table role="table" class="p-datatable-table ng-star-inserted">
+            <tbody class="p-element p-datatable-tbody">
+            <tr class="ng-star-inserted">
+              <td>Name</td>
+              <td>
+                {{assessorData.name}}
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Email</td>
+              <td>
+                {{assessorData.email}}
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td [colSpan]="2">Deleting an assessor will only be possible if the assessor has no clients and
+                assessments completed. If deletion of assessor is intended, please remove all assessments and
+                reassign/remove clients before deleting.
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Confirm deletion by entering email of assessor</td>
+              <td class="p-fluid">
+                <input pInputText type="email" formControlName="email">
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="p-datatable-footer ng-star-inserted">
+          <button pButton label="Delete Assessor" type="submit"
+                  class="p-button-danger"
+                  [disabled]="(applicationStateService.isProcessing$ | async) || deleteAssessorForm.get('email')?.value !== assessorData.email"></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

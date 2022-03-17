@@ -1,0 +1,221 @@
+<app-header></app-header>
+
+<div
+  id="main_container"
+  key="assessor-main-dash"
+  *ngIf="validCert$ | async as validCertObj"
+>
+  <app-navbar></app-navbar>
+  <div class="grid justify-content-center">
+    <div class="col-12">
+      <p-card>
+        <h1>Hello, {{ currAssessorName$.value }}</h1>
+        <h3>Your Clients</h3>
+        <p-table
+          #dt
+          id="kidsTable"
+          [value]="currAssessorClients$.value"
+          styleClass="p-datatable-gridlines"
+          [scrollable]="true"
+          scrollHeight="400px"
+        >
+          <ng-template pTemplate="caption">
+            <div class="p-d-flex">
+              {{ currAssessorName$.value }}'s Clients
+              <!-- <button type="button" pButton pRipple icon="pi pi-file-o" (click)="dt.exportCSV()" class="p-mr-2" pTooltip="CSV" tooltipPosition="bottom"></button> -->
+              <!-- <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success p-mr-2"  pTooltip="XLS" tooltipPosition="bottom"></button> -->
+              <!-- <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning p-mr-2" pTooltip="PDF" tooltipPosition="bottom"></button> -->
+              <!-- <button type="button" pButton pRipple icon="pi pi-filter" (click)="dt.exportCSV({selectionOnly:true})" class="p-button-info p-ml-auto" pTooltip="Selection Only" tooltipPosition="bottom"></button> -->
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Name</th>
+              <th>Assessments</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Ethnicity</th>
+              <th>Admission Type</th>
+              <th>Address</th>
+              <th>Accomodation Status</th>
+              <th>Accomodation Type</th>
+              <th>Education Level</th>
+              <th>Placement Type</th>
+              <th>Date of Birth</th>
+              <th>Current Occupation</th>
+              <th>Monthly Income</th>
+              <th>ID</th>
+              <th>Client System ID</th>
+              <!-- <th style="flex: 0 0 4rem"></th> -->
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-client>
+            <tr>
+              <td
+                style="
+                  width: 200px;
+                  background-image: linear-gradient(
+                    to bottom,
+                    white,
+                    rgba(238, 238, 238, 0.8)
+                  );
+                "
+                pFrozenColumn
+              >
+                {{ client.name }}
+              </td>
+              <td
+                style="
+                  width: 200px;
+                  background-image: linear-gradient(
+                    to bottom,
+                    white,
+                    rgba(238, 238, 238, 0.8)
+                  );
+                "
+                pFrozenColumn
+              >
+                <button
+                  pButton
+                  pRipple
+                  type="button"
+                  label="View Assessments"
+                  pTooltip="View {{ client.name }}'s assessments"
+                  class="p-button-raised p-button-secondary p-button-outlined"
+                  (click)="
+                    op.toggle($event);
+                    getSelectRowClientAssessments(
+                      client.clientId,
+                      client.name,
+                      client.age
+                    )
+                  "
+                ></button>
+              </td>
+              <td style="width: 200px">{{ client.age }}</td>
+              <td style="width: 200px">{{ client.gender }}</td>
+              <td style="width: 200px">{{ client.ethnicity }}</td>
+              <td style="width: 200px">{{ client.admissionType }}</td>
+              <td style="width: 200px">{{ client.address }}</td>
+              <td style="width: 200px">{{ client.accommodationStatus }}</td>
+              <td style="width: 200px">{{ client.accommodationType }}</td>
+              <td style="width: 200px">{{ client.educationLevel }}</td>
+              <td style="width: 200px">{{ client.placementType }}</td>
+              <td style="width: 200px">{{ client.birthday }}</td>
+              <td style="width: 200px">{{ client.currentOccupation }}</td>
+              <td style="width: 200px">{{ client.monthlyIncome }}</td>
+              <td style="width: 200px">{{ client.idNumber }}</td>
+              <td style="width: 200px">{{ client.clientId }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="summary">
+            Total: {{ currAssessorClients$.value.length }} client(s)
+          </ng-template>
+        </p-table>
+      </p-card>
+      <div></div>
+    </div>
+  </div>
+
+  <p-overlayPanel #op [showCloseIcon]="true" [style]="{ width: '550px' }">
+    <h3>Start Assessment</h3>
+    <h5 style="color: red" *ngIf="!validCertObj.isValid">
+      You do not have a valid certificate record. Please
+      <a
+        pTooltip="Submit Your Certification"
+        style="text-decoration-color: red"
+        [routerLink]="['certification']"
+      >
+        add a valid certificate
+      </a>
+      to start an assessment.
+    </h5>
+    <div *ngIf="assessmentTypeDropDown | async as reasons">
+      <p-dropdown
+        [options]="reasons"
+        [(ngModel)]="selectedAssessmentType"
+        (onChange)="createNewAssessment()"
+        optionLabel="name"
+        optionValue="value"
+        placeholder="Select Assessment Reason"
+        [disabled]="!validCertObj.isValid"
+      ></p-dropdown>
+    </div>
+    <br />
+    Select a row to view full assessment details or to continue assessment.
+    <br />
+    <br />
+    <ng-template pTemplate>
+      <p-table
+        [rowHover]="true"
+        [value]="selectedClientAssessments$.value"
+        selectionMode="single"
+        [(selection)]="selectedAssessment$"
+        (onRowSelect)="selectAssessmentRow()"
+        [paginator]="true"
+        [rows]="5"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="name">
+              Assessment Date<p-sortIcon field="name"></p-sortIcon>
+            </th>
+            <th pSortableColumn="reason">
+              Reason<p-sortIcon field="reason"></p-sortIcon>
+            </th>
+            <th pSortableColumn="loc">
+              LOC<p-sortIcon field="loc"></p-sortIcon>
+            </th>
+            <th pSortableColumn="status">
+              Status<p-sortIcon field="status"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-assessment>
+          <tr
+            [pSelectableRowDisabled]="!validCertObj.isValid"
+            [pSelectableRow]="rowData"
+            [ngStyle]="{
+              'background-image':
+                assessment.status == 'ASSIGNED'
+                  ? 'linear-gradient(to bottom, white, rgba(247, 181, 37, 0.3))'
+                  : 'linear-gradient(to bottom, white, rgba(247, 58, 37, 0.3))'
+            }"
+            [pTooltip]="'Continue with assessment'"
+            *ngIf="
+              assessment.status == 'ASSIGNED' ||
+                assessment.status == 'REJECTED';
+              else continueAss
+            "
+          >
+            <td>{{ assessment.assessmentDateDisplay }}</td>
+            <td>{{ assessment.reason.split("_").join(" ") }}</td>
+            <td>{{ assessment.LOC }}</td>
+            <td>{{ assessment.status }}</td>
+          </tr>
+          <ng-template #continueAss>
+            <tr
+              [pSelectableRow]="rowData"
+              pTooltip="View assessment"
+              style="
+                background-image: linear-gradient(
+                  to bottom,
+                  white,
+                  rgba(0, 255, 115, 0.3)
+                );
+              "
+            >
+              <td>{{ assessment.assessmentDateDisplay }}</td>
+              <td>{{ assessment.reason }}</td>
+              <td>{{ assessment.LOC }}</td>
+              <td>{{ assessment.status }}</td>
+            </tr>
+          </ng-template>
+        </ng-template>
+      </p-table>
+    </ng-template>
+  </p-overlayPanel>
+</div>
+
+<app-footer></app-footer>

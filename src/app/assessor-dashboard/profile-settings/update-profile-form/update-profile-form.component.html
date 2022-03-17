@@ -1,0 +1,65 @@
+<form novalidate [formGroup]="updateProfileForm" (submit)="updateProfile()">
+  <div class="grid">
+    <div class="col-12">
+      <p-messages severity="success" *ngIf="successMessage$ | async as successMessage">
+        <ng-template pTemplate>
+          <span class="custom-message">{{successMessage}}</span>
+        </ng-template>
+      </p-messages>
+      <p-messages severity="error" *ngIf="errorMessage$ | async as errorMessage">
+        <ng-template pTemplate>
+          <span class="custom-message">{{errorMessage}}</span>
+        </ng-template>
+      </p-messages>
+    </div>
+    <div class="col-12">
+      <div class="grid">
+        <div class="col-12 lg:col-6 md:col-6">
+          <div class="grid">
+            <div *ngIf="currAss.assessor as assessor">
+              <div class="col-12">
+                <h1>{{assessor.name}}</h1>
+              </div>
+              <div class="col-12">
+                <p>{{assessor.dob | date}}</p>
+              </div>
+              <div class="col-12">
+                <p>{{assessor.email}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 lg:col-6 md:col-6">
+          <div class="grid">
+            <!-- <div class="col-12">
+              <div class="p-inputgroup p-fluid">
+                <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+                <input pInputText placeholder="Name" type="text" formControlName="name"/>
+              </div>
+            </div> -->
+            <div class="col-12">
+              <div class="p-inputgroup p-fluid">
+              <span class="p-inputgroup-addon">
+                <i class="pi pi-user"></i>
+              </span>
+              <input pInputText placeholder="Name" type="text" formControlName="name"/>
+              </div>
+            </div>
+            <!-- <div class="col-12">
+              <div class="p-fluid">
+                <p-dropdown placeholder="Gender" [options]="genders" formControlName="gender"></p-dropdown>
+              </div>
+            </div> -->
+            <div class="col-12">
+              <div class="p-inputgroup">
+                <button pButton type="submit" [disabled]="updateProfileForm.invalid || (isProcessing$ | async)">Update
+                  Profile
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

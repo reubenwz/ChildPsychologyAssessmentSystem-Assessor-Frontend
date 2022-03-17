@@ -1,0 +1,105 @@
+<div class="grid">
+  <div class="col-12">
+    <form [formGroup]="createClientForm" (submit)="createClient()">
+      <div class="p-datatable-gridlines p-datatable p-component p-datatable-responsive-scroll">
+        <div class="p-datatable-wrapper">
+          <table role="table" class="p-datatable-table ng-star-inserted">
+            <tbody class="p-element p-datatable-tbody">
+            <tr class="ng-star-inserted">
+              <td>Client Unique ID</td>
+              <td class="p-fluid"><input pInputText type="number" formControlName="clientUniqueId"/></td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Name</td>
+              <td class="p-fluid">
+                <input pInputText formControlName="name"/></td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Address</td>
+              <td class="p-fluid">
+                <input pInputText formControlName="address"/></td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>NRIC</td>
+              <td class="p-fluid">
+                <input pInputText formControlName="idNumber"/>
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Gender</td>
+              <td class="p-fluid" *ngIf="gendersService.genders$ | async as genders">
+                <p-dropdown placeholder="Gender" [options]="genders" formControlName="gender"></p-dropdown>
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Date of Birth</td>
+              <td class="p-fluid">
+                <p-calendar placeholder="Date of Birth" formControlName="dob" [baseZIndex]='101'></p-calendar>
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Ethnicity</td>
+              <td class="p-fluid">
+                <input pInputText formControlName="ethnicity"/>
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Admission Type</td>
+              <td class="p-fluid">
+                <input pInputText formControlName="admissionType"/>
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Placement Type</td>
+              <td class="p-fluid">
+                <input pInputText formControlName="placementType"/>
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Accommodation Status</td>
+              <td class="p-fluid">
+                <input pInputText formControlName="accommodationStatus"/>
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Accommodation Type</td>
+              <td class="p-fluid">
+                <input pInputText formControlName="accommodationType"/>
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Education Level</td>
+              <td class="p-fluid">
+                <input pInputText formControlName="educationLevel"/>
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Current Occupation</td>
+              <td class="p-fluid">
+                <input pInputText formControlName="currentOccupation"/>
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Monthly Income</td>
+              <td class="p-fluid">
+                <input pInputText type="number" formControlName="monthlyIncome"/>
+              </td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Assessor Email</td>
+              <td class="p-fluid">
+                <input pInputText type="email" formControlName="assessorEmail"/>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-datatable-header ng-star-inserted">
+          <button pButton label="Create Client" type="submit"
+                  [disabled]="createClientForm.invalid || (applicationStateService.isProcessing$ | async)"></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

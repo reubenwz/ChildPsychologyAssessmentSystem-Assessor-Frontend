@@ -1,0 +1,156 @@
+<p-card>
+  <div class="grid">
+    <div class="col-12">
+      <p-messages [(value)]="messages" [enableService]="false"></p-messages>
+      <p-messages *ngIf="locService.errorMessage$ | async as errMsg">{{
+        errMsg
+      }}</p-messages>
+      <h1>LOC Distribution</h1>
+      <div [hidden]="dashboardPresentationService.presentationMode$ | async">
+        <div class="grid">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-info"
+            class="p-button-rounded"
+            pTooltip="This bar chart displays the LOC (Level of Care) distribution of each organisation.
+          On the X-axis lies the organisation names, and on the Y-axis lies the number of clients of each organisation with LOC1, LOC2 and LOC3.
+          The greater the LOC number, the higher the level of concern. (LOC3 would mean a higher level of concern than LOC1)"
+            style="width: 25px; height: 25px"
+          ></button>
+        </div>
+      </div>
+      <br />
+      <form
+        [formGroup]="locDistFormGroup"
+        novalidate
+        [hidden]="dashboardPresentationService.presentationMode$ | async"
+      >
+        <div class="grid">
+          <!-- Start Date Input with p-calendar -->
+          <div class="lg:col-3 md:col-6 sm:col-12">
+            <div class="p-inputgroup p-fluid">
+              <span class="p-inputgroup-addon">
+                <i class="pi pi-calendar"></i>
+              </span>
+              <span class="p-float-label">
+                <p-calendar
+                  inputId="startDate"
+                  formControlName="startDate"
+                  [maxDate]="locDistFormGroup.get('endDate')?.value"
+                  dateFormat="dd/mm/yy"
+                  (onInput)="updateInformationSelection()"
+                  (onSelect)="updateInformationSelection()"
+                ></p-calendar>
+                <label for="startDate">Start Date</label>
+              </span>
+            </div>
+          </div>
+          <!-- finish Start Date Input with p-calendar -->
+
+          <!-- End Date Input with p-calendar -->
+          <div class="lg:col-3 md:col-6 sm:col-12">
+            <div class="p-inputgroup p-fluid">
+              <span class="p-inputgroup-addon">
+                <i class="pi pi-calendar"></i>
+              </span>
+              <span class="p-float-label">
+                <label for="endDate">End Date</label>
+                <p-calendar
+                  placeholder="End Date"
+                  inputId="endDate"
+                  formControlName="endDate"
+                  [minDate]="locDistFormGroup.get('startDate')?.value"
+                  dateFormat="dd/mm/yy"
+                  (onInput)="updateInformationSelection()"
+                  (onSelect)="updateInformationSelection()"
+                ></p-calendar>
+                <label for="endDate">End Date</label>
+              </span>
+            </div>
+          </div>
+          <!-- finish End Date Input with p-calendar -->
+        </div>
+        <br />
+        <div class="grid">
+          <!-- Start Age Input with p-dropdown -->
+          <div
+            class="lg:col-3 md:col-6 sm:col-12"
+            *ngIf="locService.startAge$ | async as startAge"
+          >
+            <div class="p-fluid">
+              <span class="p-float-label">
+                <p-dropdown
+                  placeholder="Start Age"
+                  inputId="startAge"
+                  [options]="startAge"
+                  formControlName="startAge"
+                  optionLabel="individualRange"
+                  optionValue="individualRangeCode"
+                  (onChange)="updateInformationSelection()"
+                >
+                </p-dropdown>
+                <label for="startAge">Start Age</label>
+              </span>
+            </div>
+          </div>
+          <!-- finish Start Age Input with p-dropdown -->
+
+          <!-- End age Input with p-dropdown -->
+          <div
+            class="lg:col-3 md:col-6 sm:col-12"
+            *ngIf="locService.endAge$ | async as endAge"
+          >
+            <div class="p-fluid">
+              <span class="p-float-label">
+                <p-dropdown
+                  placeholder="End Age"
+                  inputId="endAge"
+                  [options]="endAge"
+                  formControlName="endAge"
+                  optionLabel="individualRange"
+                  optionValue="individualRangeCode"
+                  (onChange)="updateInformationSelection()"
+                >
+                </p-dropdown>
+                <label for="endAge">End Age</label>
+              </span>
+            </div>
+          </div>
+          <!-- finish End age Input with p-dropdown -->
+        </div>
+        <div class="grid">
+          <!-- Assessment Type Input with p-dropdown -->
+          <div
+            class="lg:col-3 md:col-6 sm:col-12"
+            *ngIf="locService.assessmentTypes$ | async as assTypes"
+          >
+            <div class="p-fluid">
+              <span class="p-float-label">
+                <p-multiSelect
+                  name="assTypeName"
+                  inputId="assTypeLMAO"
+                  [options]="assTypes"
+                  optionLabel="assTypeName"
+                  optionValue="assTypeCode"
+                  [(ngModel)]="selectedAssessmentTypes"
+                  [ngModelOptions]="{ standalone: true }"
+                  (onChange)="logSelectedOrgs()"
+                >
+                </p-multiSelect>
+                <label for="assTypeLMAO">Assessment Type</label>
+              </span>
+            </div>
+          </div>
+          <!-- finish Assessment Type Input with p-dropdown -->
+        </div>
+      </form>
+
+      <div class="col-12">
+        <div *ngIf="locService.locDisplayData$ | async as manyOrgData"></div>
+      </div>
+    </div>
+  </div>
+</p-card>
+
+<!-- [(ngModel)]="selectedOrgs" (ngModelChange)="logSelectedOrgs()" -->

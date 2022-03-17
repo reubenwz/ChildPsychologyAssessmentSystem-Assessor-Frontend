@@ -1,0 +1,48 @@
+<p-card>
+  <div *ngIf="dashboardPresentationService.presentationMode$ | async">
+    <h1>Recertified Barchart</h1>
+  </div>
+  <div [hidden]="dashboardPresentationService.presentationMode$ | async">
+    <div class="grid">
+      <h1>Scores-Recertification Linechart</h1>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-info"
+        class="p-button-rounded"
+        pTooltip="This line chart displays the scores of each certification attempt of an assessor of an organisation. The x-axis would be the attempted number of certifications, and the y-axis would be the score obtained for that particular assessment."
+        style="width: 25px; height: 25px"
+      ></button>
+    </div>
+  </div>
+  <div id="divChart" style="height: 500px">
+    <form
+      [formGroup]="scoresLinechartFormGroup"
+      novalidate
+      *ngIf="(dashboardPresentationService.presentationMode$ | async) === false"
+    >
+      <div class="grid">
+        <div
+          class="lg:col-5 md:col-6 sm:col-12"
+          *ngIf="selectedAssessorId$ | async as selectedAssessorId"
+        >
+          <div class="p-fluid">
+            <span class="p-float-label">
+              <p-dropdown
+                placeholder="Select Assessor Id"
+                inputId="selectedAssessorId"
+                [options]="assessors"
+                formControlName="selectedAssessorId"
+                optionLabel="individualRange"
+                optionValue="individualRangeCode"
+                (onChange)="updateInformationSelection()"
+              >
+              </p-dropdown>
+            </span>
+          </div>
+        </div>
+      </div>
+    </form>
+    <canvas id="scoresLineChart"></canvas>
+  </div>
+</p-card>

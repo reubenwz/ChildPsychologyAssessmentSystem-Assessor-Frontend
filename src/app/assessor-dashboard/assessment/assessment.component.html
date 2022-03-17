@@ -1,0 +1,180 @@
+<app-header></app-header>
+<div id="main_container" key="assessment">
+  <app-navbar></app-navbar>
+  <div class="grid justify-content-center">
+    <div class="col-12">
+      <p-card [style]="styleOBJ">
+        <h1>{{ assessmentReason }} assessment for {{ kidName }}</h1>
+        <h3>Done on: {{ assDate }}</h3>
+        <h3 *ngIf="approvedDate">Approved on: {{ approvedDate }}</h3>
+
+        <p-table
+          #dtAss
+          [value]="responseArray"
+          responsiveLayout="scroll"
+          styleClass="p-datatable-gridlines; p-datatable-striped"
+          [paginator]="true"
+          [rows]="5"
+          dataKey="assessmentId"
+          [showCurrentPageReport]="true"
+          [rowHover]="true"
+        >
+          <ng-template pTemplate="caption">
+            <div class="p-d-flex p-ai-center p-jc-between">Responses</div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="question.questionCode">
+                Qn. Code <p-sortIcon field="question.questionCode"></p-sortIcon>
+              </th>
+              <th pSortableColumn="question.questionTitle">
+                Question Title
+                <p-sortIcon field="question.questionTitle"></p-sortIcon>
+              </th>
+              <th pSortableColumn="responseValue">
+                Response Value <p-sortIcon field="responseValue"></p-sortIcon>
+              </th>
+              <th pSortableColumn="responseNotes">
+                Response Notes <p-sortIcon field="responseNotes"></p-sortIcon>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-indivResponse>
+            <tr>
+              <td>{{ indivResponse.question.questionCode }}</td>
+              <td>
+                <button
+                  type="button"
+                  label=""
+                  class="p-button-rounded"
+                  style="padding: 0; border: none; background: none"
+                  pTooltip="{{ indivResponse.question.questionDescription[0] }}"
+                  onclick="test"
+                >
+                  {{ indivResponse.question.questionTitle }}
+                </button>
+              </td>
+              <td>{{ indivResponse.responseValue }}</td>
+              <td>{{ indivResponse.responseNotes }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="summary">LOC: {{ currentLOC }}</ng-template>
+        </p-table>
+      </p-card>
+      <p-card [style]="styleBTM">
+        <h2>{{ kidName }}'s Caretaker Assessments</h2>
+        <div
+          class="p-d-flex"
+          *ngFor="let caretakerResponse of allCareTakerAssessments; index as i"
+        >
+          <p-table
+            [value]="caretakerResponse.caretakerResponses"
+            styleClass="p-datatable-gridlines"
+            [paginator]="true"
+            [rows]="5"
+            [showCurrentPageReport]="true"
+            [rowHover]="true"
+          >
+            <ng-template pTemplate="caption">
+              <p-toolbar>
+                <div class="p-toolbar-group-left">
+                  <b
+                    >{{ i + 1 }}.
+                    {{ caretakerResponse.caretaker.relationshipToClient }},
+                    {{ caretakerResponse.caretaker.name }} ({{
+                      caretakerResponse.caretakerType.split("_").join(" ")
+                    }})</b
+                  >
+                </div>
+                <div class="p-toolbar-group-right">
+                  <p-tag
+                    *ngIf="caretakerResponse.caretaker.active"
+                    severity="success"
+                    value="Active"
+                  >
+                  </p-tag>
+                  <p-tag
+                    *ngIf="!caretakerResponse.caretaker.active"
+                    severity="danger"
+                    value="Inactive"
+                  >
+                  </p-tag>
+                </div>
+              </p-toolbar>
+            </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="question.questionCode">
+                  Qn. Code<p-sortIcon
+                    field="question.questionCode"
+                  ></p-sortIcon>
+                </th>
+                <th pSortableColumn="question.questionTitle">
+                  Question Title
+                  <p-sortIcon field="question.questionTitle"></p-sortIcon>
+                </th>
+                <th pSortableColumn="responseValue">
+                  Response Value <p-sortIcon field="responseValue"></p-sortIcon>
+                </th>
+                <th pSortableColumn="responseNotes">
+                  Response Notes <p-sortIcon field="responseNotes"></p-sortIcon>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-caretakerResponse>
+              <tr>
+                <td>{{ caretakerResponse.question.questionCode }}</td>
+                <td>
+                  <button
+                    type="button"
+                    label=""
+                    class="p-button-rounded"
+                    style="padding: 0; border: none; background: none"
+                    pTooltip="{{
+                      caretakerResponse.question.questionDescription[0]
+                    }}"
+                    onclick="test"
+                  >
+                    {{ caretakerResponse.question.questionTitle }}
+                  </button>
+                </td>
+                <td>{{ caretakerResponse.responseValue }}</td>
+                <td>{{ caretakerResponse.responseNotes }}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="summary"
+              >{{ caretakerResponse.caretaker.name }}'s Overall Level of Needs:
+              {{
+                caretakerResponse.levelOfNeeds.split("_").join(" ")
+              }}</ng-template
+            >
+          </p-table>
+          <div class="p-d-flex"><br /></div>
+        </div>
+        <div class="p-grid" style="float: left">
+          <button
+            pButton
+            class="p-button-warning p-button-raised"
+            icon="pi pi-chevron-left"
+            iconPos="left"
+            pTooltip="Previous Page"
+            label="Back"
+            (click)="backButtonClick()"
+          ></button>
+        </div>
+        <div class="p-grid" style="float: right">
+          <button
+            pButton
+            class="p-button-warning p-button-raised"
+            icon="pi"
+            pTooltip="Redo Assessment"
+            label="Redo"
+            (click)="redoAssessment()"
+          ></button>
+        </div>
+        <br />
+      </p-card>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

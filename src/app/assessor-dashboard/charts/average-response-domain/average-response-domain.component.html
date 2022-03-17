@@ -1,0 +1,160 @@
+<p-card>
+  <div class="grid">
+    <div class="col-12">
+      <p-messages [(value)]="messages" [enableService]="false"></p-messages>
+      <p-messages
+        *ngIf="averageResponseDomainService.errorMessage$ | async as errMsg"
+        >{{ errMsg }}</p-messages
+      >
+
+      <div *ngIf="dashboardPresentationService.presentationMode$ | async">
+        <h1 class="grid justify-content-center">Average Response Domain</h1>
+      </div>
+      <div [hidden]="dashboardPresentationService.presentationMode$ | async">
+        <div class="grid">
+          <h1>Average Response Domain</h1>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-info"
+            class="p-button-rounded"
+            pTooltip="This bar chart displays the average response (0 to 3) for each domain. A domain is a factor of the clients general well-being e.g. Life Functioning, Transition to Adulthood, School etc. The lower the score, the less the call for concern would be for the particular domain."
+            style="width: 25px; height: 25px"
+          ></button>
+        </div>
+      </div>
+      <br />
+      <form
+        [formGroup]="averageResponseDomainFormGroup"
+        novalidate
+        *ngIf="
+          (dashboardPresentationService.presentationMode$ | async) === false
+        "
+      >
+        <div class="grid">
+          <!-- Start Date Input with p-calendar -->
+          <div class="lg:col-4 md:col-6 sm:col-12">
+            <div class="p-inputgroup p-fluid">
+              <span class="p-inputgroup-addon">
+                <i class="pi pi-calendar"></i>
+              </span>
+              <span class="p-float-label">
+                <p-calendar
+                  inputId="startDate"
+                  formControlName="startDate"
+                  [maxDate]="
+                    averageResponseDomainFormGroup.get('endDate')?.value
+                  "
+                  dateFormat="dd/mm/yy"
+                  (onInput)="updateInformationSelection()"
+                  (onSelect)="updateInformationSelection()"
+                ></p-calendar>
+                <label for="startDate">Start Date</label>
+              </span>
+            </div>
+          </div>
+          <!-- finish Start Date Input with p-calendar -->
+
+          <!-- End Date Input with p-calendar -->
+          <div class="lg:col-4 md:col-6 sm:col-12">
+            <div class="p-inputgroup p-fluid">
+              <span class="p-inputgroup-addon">
+                <i class="pi pi-calendar"></i>
+              </span>
+              <span class="p-float-label">
+                <label for="endDate">End Date</label>
+                <p-calendar
+                  placeholder="End Date"
+                  inputId="endDate"
+                  formControlName="endDate"
+                  [minDate]="
+                    averageResponseDomainFormGroup.get('startDate')?.value
+                  "
+                  dateFormat="dd/mm/yy"
+                  (onInput)="updateInformationSelection()"
+                  (onSelect)="updateInformationSelection()"
+                ></p-calendar>
+                <label for="endDate">End Date</label>
+              </span>
+            </div>
+          </div>
+          <!-- finish End Date Input with p-calendar -->
+
+          <!-- Start Age Input with p-dropdown -->
+          <div
+            class="lg:col-2 md:col-6 sm:col-12"
+            *ngIf="averageResponseDomainService.startAge$ | async as startAge"
+          >
+            <div class="p-fluid">
+              <span class="p-float-label">
+                <p-dropdown
+                  placeholder="Start Age"
+                  inputId="startAge"
+                  [options]="startAge"
+                  formControlName="startAge"
+                  optionLabel="individualRange"
+                  optionValue="individualRangeCode"
+                  (onChange)="updateInformationSelection()"
+                >
+                </p-dropdown>
+                <label for="startAge">Start Age</label>
+              </span>
+            </div>
+          </div>
+          <!-- finish Start Age Input with p-dropdown -->
+
+          <!-- End age Input with p-dropdown -->
+          <div
+            class="lg:col-2 md:col-6 sm:col-12"
+            *ngIf="averageResponseDomainService.endAge$ | async as endAge"
+          >
+            <div class="p-fluid">
+              <span class="p-float-label">
+                <p-dropdown
+                  placeholder="End Age"
+                  inputId="endAge"
+                  [options]="endAge"
+                  formControlName="endAge"
+                  optionLabel="individualRange"
+                  optionValue="individualRangeCode"
+                  (onChange)="updateInformationSelection()"
+                >
+                </p-dropdown>
+                <label for="endAge">End Age</label>
+              </span>
+            </div>
+          </div>
+          <!-- finish End age Input with p-dropdown -->
+        </div>
+      </form>
+
+      <div class="col-12">
+        <div
+          *ngIf="
+            averageResponseDomainService.averageResponseDomainDisplayData$
+              | async as averageResponseDomainData
+          "
+        >
+          <div
+            *ngIf="
+              averageResponseDomainService.averageResponseDomainBarChartOptions$
+                | async as averageResponseDomainOptions
+            "
+          >
+            <canvas
+              id="averageResponseDomainChart"
+              style="height: 400px"
+            ></canvas>
+          </div>
+        </div>
+      </div>
+      <div [hidden]="dashboardPresentationService.presentationMode$ | async">
+        <p-colorPicker
+          [(ngModel)]="color"
+          (onChange)="sendColorToService()"
+          pTooltip="Select color, then click on bar to highlight"
+        ></p-colorPicker>
+      </div>
+    </div>
+  </div>
+</p-card>

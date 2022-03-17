@@ -1,0 +1,151 @@
+<div class="grid" *ngIf="clientService.specificClient$ | async as client">
+  <div class="col-12" *ngIf="(editMode$ | async) === false">
+    <div
+      class="
+        p-datatable-gridlines
+        p-datatable
+        p-component
+        p-datatable-responsive-scroll
+      "
+    >
+      <div class="p-datatable-header ng-star-inserted">
+        <button pButton label="Edit Details" (click)="enableEditing()"></button>
+      </div>
+      <div class="p-datatable-wrapper">
+        <table role="table" class="p-datatable-table ng-star-inserted">
+          <tbody class="p-element p-datatable-tbody">
+            <tr class="ng-star-inserted">
+              <td>Client Unique ID</td>
+              <td>{{ client.clientUniqueId }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Name</td>
+              <td>{{ client.name }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Address</td>
+              <td>{{ client.address }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>NRIC</td>
+              <td>{{ client.idNumber }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Gender</td>
+              <td>{{ client.gender }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Date of Birth</td>
+              <td>{{ client.dob | date }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Ethnicity</td>
+              <td>{{ client.ethnicity }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Admission Type</td>
+              <td>{{ client.admissionType }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Placement Type</td>
+              <td>{{ client.placementType }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Accommodation Status</td>
+              <td>{{ client.accommodationStatus }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Accommodation Type</td>
+              <td>{{ client.accommodationType }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Education Level</td>
+              <td>{{ client.educationLevel }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Current Occupation</td>
+              <td>{{ client.currentOccupation }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Monthly Income</td>
+              <td>{{ client.monthlyIncome | currency }}</td>
+            </tr>
+            <tr class="ng-star-inserted">
+              <td>Assessor</td>
+              <td>
+                <span *ngIf="client.assessor"
+                  ><a
+                    routerLink="/dashboard/assessors/{{
+                      client.assessor.assessorId
+                    }}"
+                    >{{ client.assessor.email }}</a
+                  ></span
+                >
+                <span *ngIf="!client.assessor"
+                  >Currently not assigned to any assessor</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <app-update-specific-client
+    (disableEditingEvent)="disableEditing()"
+    *ngIf="editMode$ | async"
+  ></app-update-specific-client>
+  <div class="col-12"><h2>Assessments</h2></div>
+  <div class="col-12">
+    <p-table
+      [value]="client.assessment ? client.assessment : []"
+      [rows]="30"
+      [paginator]="true"
+      responsiveLayout="scroll"
+      [rowHover]="true"
+      dataKey="assessmentId"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [showCurrentPageReport]="true"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Assessment Unique Id</th>
+          <th>Assessment Date</th>
+          <th>Status</th>
+          <th>Reason</th>
+          <th>Approved Date</th>
+          <th>LOC</th>
+          <th>Assessor</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-assessment>
+        <tr>
+          <td>{{ assessment.assessmentUniqueId }}</td>
+          <td>{{ assessment.assessmentDate | date }}</td>
+          <td>
+            {{ assessment.status ? assessment.status : "No Status Available" }}
+          </td>
+          <td>
+            {{ assessment.reason ? assessment.reason : "No Reason Available" }}
+          </td>
+          <td>
+            {{
+              assessment.approvedDate
+                ? (assessment.approvedDate | date)
+                : "No Approved Date"
+            }}
+          </td>
+          <td>{{ assessment.loc ? assessment.loc : "No LOC Available" }}</td>
+          <td>
+            <a
+              routerLink="/dashboard/assessors/{{ client.assessor.assessorId }}"
+              *ngIf="client.assessor"
+              >{{ client.assessor.email }}</a
+            ><span *ngIf="!client.assessor">Not assigned</span>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <app-view-specific-client-caretakers></app-view-specific-client-caretakers>
+</div>

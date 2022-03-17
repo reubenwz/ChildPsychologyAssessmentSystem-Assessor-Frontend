@@ -1,0 +1,40 @@
+<p-card>
+  <div class="grid">
+    <div class="col-12">
+      <p-messages [(value)]="messages" [enableService]="false"></p-messages>
+      <p-messages
+        *ngIf="recertifiedBarchartService.errorMessage$ | async as errMsg"
+        >{{ errMsg }}</p-messages
+      >
+
+      <div *ngIf="dashboardPresentationService.presentationMode$ | async">
+        <h1>Recertified Barchart</h1>
+      </div>
+      <div [hidden]="dashboardPresentationService.presentationMode$ | async">
+        <div class="grid">
+          <h1>Recertified Barchart</h1>
+          <button
+            pButton
+            type="button"
+            icon="pi pi-info"
+            class="p-button-rounded"
+            pTooltip="This bar chart displays number of times each assessor is recertified in this organisation."
+            style="width: 25px; height: 25px"
+          ></button>
+        </div>
+      </div>
+      <br />
+
+      <div class="col-12">
+        <canvas id="recertifiedBarchartChart" style="height: 400px"></canvas>
+      </div>
+      <div [hidden]="dashboardPresentationService.presentationMode$ | async">
+        <p-colorPicker
+          [(ngModel)]="color"
+          (onChange)="sendColorToService()"
+          pTooltip="Select color, then click on bar to highlight"
+        ></p-colorPicker>
+      </div>
+    </div>
+  </div>
+</p-card>

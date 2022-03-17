@@ -1,0 +1,75 @@
+<div class="grid justify-content-center">
+  <div class="col-12">
+    <form
+      [formGroup]="createCertificationForm"
+      (submit)="createCertification()"
+      style="height: 500px"
+    >
+      <div class="p-datatable-gridlines p-datatable p-component">
+        <div class="p-datatable-wrapper">
+          <table role="table" class="p-datatable-table ng-star-inserted">
+            <tbody class="p-element p-datatable-tbody">
+              <tr class="ng-star-inserted">
+                <td style="width: 30%">Date of Certification</td>
+                <td style="width: max-content" class="p-fluid">
+                  <div class="p-field p-col-12 p-md-4">
+                    <p-calendar
+                      placeholder="Date of Certification"
+                      formControlName="dateOfCert"
+                      [minDate]="minDateForCreateCert"
+                      [maxDate]="maxDateForCreateCert"
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
+                      yearRange="2000:2030"
+                    >
+                    </p-calendar>
+                  </div>
+                  <!-- <p-calendar  formControlName="dateOfCert" [baseZIndex]="101"
+                    style="width: 400px;"></p-calendar> -->
+                </td>
+              </tr>
+              <tr class="ng-star-inserted">
+                <td>Vignette</td>
+                <td>
+                  <input pInputText formControlName="vignette" />
+                </td>
+              </tr>
+              <tr class="ng-star-inserted">
+                <td>Recent Score</td>
+                <td class="p-fluid">
+                  <input
+                    pInputText
+                    type="number"
+                    formControlName="recentScore"
+                  />
+                </td>
+              </tr>
+              <tr class="ng-star-inserted">
+                <td>Number of times recertified</td>
+                <td class="p-fluid">
+                  <input
+                    pInputText
+                    type="number"
+                    formControlName="noOfTimesRecertified"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-datatable-header ng-star-inserted">
+          <button
+            pButton
+            label="Create Certification"
+            type="submit"
+            [disabled]="
+              createCertificationForm.invalid ||
+              (applicationStateService.isProcessing$ | async)
+            "
+          ></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
